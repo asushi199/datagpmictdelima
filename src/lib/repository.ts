@@ -348,7 +348,7 @@ async function listDbSchools(): Promise<DbSchool[]> {
   const { data, error } = await supabase
     .from("schools")
     .select("code,name,zone,current_version_id")
-    .order("name")
+    .order("code")
     .returns<DbSchool[]>();
   if (error) throw error;
   return data ?? [];
