@@ -35,6 +35,13 @@ export function normalizeSchoolName(value: string | null | undefined): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+export function cleanSchoolDisplayName(value: string | null | undefined): string {
+  return String(value ?? "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toUpperCase();
+}
+
 export function cleanSubmission(submission: ImportSubmission): ImportSubmission {
   return {
     ...submission,

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildPublicDirectory,
   chooseLatestBySchoolCode,
+  cleanSchoolDisplayName,
   exportAdminCsv,
   formatPkgZone,
   normalizeSchoolCode,
@@ -41,6 +42,7 @@ const submissions: ImportSubmission[] = [
 describe("data utilities", () => {
   it("normalizes school codes and common school-name variants", () => {
     expect(normalizeSchoolCode(" ABA 1025 ")).toBe("ABA1025");
+    expect(cleanSchoolDisplayName("  Sjkc   Chung Cheng ")).toBe("SJKC CHUNG CHENG");
     expect(formatPkgZone("AYER TAWAR")).toBe("PKG AYER TAWAR");
     expect(formatPkgZone("PKG BERUAS")).toBe("PKG BERUAS");
     expect(normalizeSchoolName("Sekolah Kebangsaan Kampong Baharu")).toBe(

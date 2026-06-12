@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EditSchoolNameForm } from "@/components/EditSchoolNameForm";
 import { RestoreButton } from "@/components/RestoreButton";
 import { requireAdmin } from "@/lib/admin-auth";
 import { formatPkgZone } from "@/lib/data-utils";
@@ -39,6 +40,13 @@ export default async function AdminSchoolPage({ params }: { params: { code: stri
       </div>
 
       <section className="panel grid">
+        <h2>Edit Maklumat Sekolah</h2>
+        <EditSchoolNameForm schoolCode={school.schoolCode} schoolName={school.schoolName} />
+      </section>
+
+      <div style={{ height: 16 }} />
+
+      <section className="panel grid">
         <h2>Data Semasa</h2>
         <div className="grid three">
           {school.roles.map((role) => (
@@ -62,7 +70,7 @@ export default async function AdminSchoolPage({ params }: { params: { code: stri
                 <strong>{new Date(version.submittedAt).toLocaleString("ms-MY")}</strong>
                 {version.isCurrent ? <span className="badge" style={{ marginLeft: 8 }}>Semasa</span> : null}
                 <div className="muted">
-                  Pengisi: {version.submitterName || "-"} · Telefon: {version.submitterPhone || "-"}
+                  Pengisi: {version.submitterName || "-"} - Telefon: {version.submitterPhone || "-"}
                 </div>
               </div>
               {!version.isCurrent && isSupabaseConfigured() ? (

@@ -4,6 +4,7 @@ import initialData from "@/data/initial-data.json";
 import {
   buildPublicDirectory,
   chooseLatestBySchoolCode,
+  cleanSchoolDisplayName,
   cleanSubmission,
   exportAdminCsv,
   normalizeSchoolCode,
@@ -291,6 +292,38 @@ export async function restoreVersion(versionId: string): Promise<string> {
   });
 
   return version.school_code;
+}
+
+export async function updateSchoolName(schoolCode: string, nextName: string): Promise<string> {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) {
+    throw new Error("Supabase belum dikonfigurasi.");
+  }
+
+  const code = normalizeSchoolCode(schoolCode);
+  const name = cleanSchoolDisplayName(nextName);
+  if (!code || !name) {
+    throw new Error("Kod sekolah dan nama sekolah diperlukan.");
+  }
+
+  const { error: schoolError } = await supabase
+    .from("schools")
+    .update({ name })
+    .eq("code", code);
+  if (schoolError) throw schoolError;
+
+  const { error: versionError } = await supabase
+    .from("contact_versions")
+    .update({ school_name: name })
+    .eq("school_code", code);
+  if (versionError) throw versionError;
+
+  await supabase.from("admin_actions").insert({
+    action: "update_school_name",
+    school_code: code,
+  });
+
+  return code;
 }
 
 export async function exportCurrentAdminCsv(): Promise<string> {
