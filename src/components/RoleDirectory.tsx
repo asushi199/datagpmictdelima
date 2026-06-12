@@ -5,7 +5,7 @@ import { formatPkgZone } from "@/lib/data-utils";
 import { useMemo, useState } from "react";
 import type { PublicDirectoryRow, TeacherRole } from "@/lib/types";
 
-type SortKey = "schoolName" | "teacherName" | "zone" | "phone";
+type SortKey = "schoolCode" | "schoolName" | "teacherName" | "zone" | "phone";
 type SortDirection = "asc" | "desc";
 type Variant = "gpm" | "gpict" | "gpdelima";
 
@@ -28,6 +28,7 @@ const roleCopy: Record<TeacherRole, { title: string; eyebrow: string; empty: str
 };
 
 const sortLabels: Record<SortKey, string> = {
+  schoolCode: "Kod Sekolah",
   schoolName: "Sekolah",
   teacherName: "Nama Guru",
   zone: "PKG",
@@ -44,7 +45,7 @@ export function RoleDirectory({
   variant: Variant;
 }) {
   const [query, setQuery] = useState("");
-  const [sortKey, setSortKey] = useState<SortKey>("schoolName");
+  const [sortKey, setSortKey] = useState<SortKey>("schoolCode");
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const copy = roleCopy[role];
 
