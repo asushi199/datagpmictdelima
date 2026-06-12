@@ -212,3 +212,255 @@ tr:last-child td {
     font-size: 24px;
   }
 }
+
+.portal-shell {
+  max-width: 1180px;
+}
+
+.portal-topbar {
+  align-items: flex-start;
+}
+
+.portal-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.portal-card {
+  border-radius: 8px;
+  color: #fff;
+  display: grid;
+  min-height: 260px;
+  overflow: hidden;
+  padding: 24px;
+  position: relative;
+}
+
+.portal-card::after {
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  border-radius: 999px;
+  content: "";
+  height: 160px;
+  position: absolute;
+  right: -48px;
+  top: -34px;
+  width: 160px;
+}
+
+.portal-card span,
+.portal-card p,
+.portal-card strong,
+.portal-card h2 {
+  position: relative;
+  z-index: 1;
+}
+
+.portal-card span {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.portal-card h2 {
+  font-size: 44px;
+  margin: 26px 0 8px;
+}
+
+.portal-card p {
+  line-height: 1.5;
+  margin: 0;
+  max-width: 300px;
+}
+
+.portal-card strong {
+  align-self: end;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  justify-self: start;
+  padding: 8px 12px;
+}
+
+.portal-gpm {
+  background: linear-gradient(135deg, #7c2d12, #b45309 55%, #d97706);
+}
+
+.portal-gpict {
+  background: linear-gradient(135deg, #0f3b73, #155e9f 55%, #0891b2);
+}
+
+.portal-gpdelima {
+  background: linear-gradient(135deg, #14532d, #15803d 55%, #65a30d);
+}
+
+.role-page {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 28px 18px 52px;
+}
+
+.role-hero {
+  align-items: flex-end;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  min-height: 230px;
+  overflow: hidden;
+  padding: 28px;
+  position: relative;
+}
+
+.role-hero::before {
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  content: "";
+  height: 220px;
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 220px;
+}
+
+.role-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.role-hero h1 {
+  font-size: 40px;
+  line-height: 1.1;
+  margin: 10px 0;
+  max-width: 720px;
+}
+
+.role-hero p {
+  margin: 0;
+  max-width: 620px;
+  opacity: 0.88;
+}
+
+.role-eyebrow {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 7px 11px;
+  text-transform: uppercase;
+}
+
+.role-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.role-gpm .role-hero {
+  background: radial-gradient(circle at top right, rgba(254, 215, 170, 0.36), transparent 32%), linear-gradient(135deg, #78350f, #a16207);
+}
+
+.role-gpict .role-hero {
+  background: radial-gradient(circle at top right, rgba(186, 230, 253, 0.36), transparent 34%), linear-gradient(135deg, #0f172a, #075985);
+}
+
+.role-gpdelima .role-hero {
+  background: radial-gradient(circle at top right, rgba(187, 247, 208, 0.34), transparent 34%), linear-gradient(135deg, #064e3b, #15803d);
+}
+
+.role-toolbar {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(260px, 1fr) 180px 160px;
+  margin-bottom: 14px;
+  padding: 16px;
+}
+
+.role-count {
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+.role-count strong {
+  color: var(--text);
+}
+
+.role-card-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.directory-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 18px;
+  min-height: 190px;
+  padding: 18px;
+}
+
+.directory-card h2 {
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 12px 0 6px;
+}
+
+.directory-card p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.teacher-block {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 6px;
+  padding-top: 14px;
+}
+
+.teacher-block span {
+  font-weight: 800;
+}
+
+.teacher-block strong {
+  color: var(--primary-dark);
+  font-size: 18px;
+}
+
+.role-gpm .directory-card {
+  border-top: 4px solid #d97706;
+}
+
+.role-gpict .directory-card {
+  border-top: 4px solid #0284c7;
+}
+
+.role-gpdelima .directory-card {
+  border-top: 4px solid #16a34a;
+}
+
+@media (max-width: 900px) {
+  .portal-grid,
+  .role-card-grid,
+  .role-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .role-hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .role-hero h1 {
+    font-size: 30px;
+  }
+}

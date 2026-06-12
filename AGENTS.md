@@ -17,9 +17,10 @@
   - `.\scripts\dev.ps1`
   - `.\scripts\test.ps1`
   - `.\scripts\build.ps1`
-- Use `node .\scripts\import-initial-data.mjs` locally to regenerate data from the Excel file.
+- Use `npm run import:initial` locally to regenerate data from the Excel file.
 
 ## Scope
 - V1 has no teacher login, no school PIN, and no approval workflow.
 - Admin access uses `ADMIN_PASSWORD` from environment variables.
 - Supabase service role access must only be used server-side.
+

@@ -38,10 +38,10 @@ ADMIN_PASSWORD=
 
 ## Jana Semula Data Awal
 
-Disebabkan folder projek mengandungi aksara `&`, elakkan `npm run` di Windows. Guna arahan terus:
+Guna arahan ini selepas fail Excel sumber dikemas kini:
 
 ```powershell
-node .\scripts\import-initial-data.mjs
+npm run import:initial
 ```
 
 Arahan ini menjana:
@@ -51,7 +51,15 @@ Arahan ini menjana:
 
 ## Jalankan Di Windows
 
-Guna skrip PowerShell ini:
+Guna arahan npm biasa:
+
+```powershell
+npm run dev
+npm run test
+npm run build
+```
+
+Skrip PowerShell ini juga disediakan jika mahu menjalankan arahan secara terus:
 
 ```powershell
 .\scripts\dev.ps1
@@ -68,3 +76,4 @@ Sebelum deploy:
 1. Isi environment variable di Vercel atau server.
 2. Jangan upload fail Excel/PDF asal ke repo awam.
 3. Jika mahu masukkan data sebenar ke Supabase, jalankan import secara tempatan dan masukkan data melalui Supabase SQL Editor, bukan melalui GitHub.
+
