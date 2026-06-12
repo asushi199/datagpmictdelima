@@ -31,6 +31,7 @@ export function SubmitForm({
     () => [...schools].sort((a, b) => a.code.localeCompare(b.code, "ms", { numeric: true })),
     [schools],
   );
+  const [schoolQuery, setSchoolQuery] = useState("");
   const [schoolCode, setSchoolCode] = useState(sortedSchools[0]?.code ?? "");
   const [activeRole, setActiveRole] = useState<TeacherRole>("GPICT");
   const [submitterName, setSubmitterName] = useState("");
@@ -39,10 +40,32 @@ export function SubmitForm({
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  const filteredSchools = useMemo(() => {
+    const query = schoolQuery.trim().toLowerCase();
+    if (!query) return sortedSchools;
+    return sortedSchools.filter((school) =>
+      [school.code, school.name, school.zone]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [schoolQuery, sortedSchools]);
+
   const selectedSchool = useMemo(
     () => sortedSchools.find((school) => school.code === schoolCode),
     [schoolCode, sortedSchools],
   );
+
+  useEffect(() => {
+    if (filteredSchools.length === 0) {
+      setSchoolCode("");
+      return;
+    }
+
+    if (!filteredSchools.some((school) => school.code === schoolCode)) {
+      setSchoolCode(filteredSchools[0].code);
+    }
+  }, [filteredSchools, schoolCode]);
 
   useEffect(() => {
     setRoleState(buildRoleStateForSchool(currentRows, schoolCode));
@@ -81,7 +104,17 @@ export function SubmitForm({
 
   return (
     <form className="grid" onSubmit={onSubmit}>
-      <div className="panel grid two">
+      <div className="panel grid two school-lookup-panel">
+        <div className="field school-search-field">
+          <label htmlFor="schoolSearch">Cari sekolah</label>
+          <input
+            id="schoolSearch"
+            value={schoolQuery}
+            onChange={(event) => setSchoolQuery(event.target.value)}
+            placeholder="Taip kod sekolah atau nama sekolah, contoh: ABC1053 atau UK ING"
+          />
+          <span className="lookup-hint">{filteredSchools.length} sekolah sepadan</span>
+        </div>
         <div className="field">
           <label htmlFor="school">Kod Sekolah / Sekolah</label>
           <select
@@ -89,8 +122,12 @@ export function SubmitForm({
             value={schoolCode}
             onChange={(event) => setSchoolCode(event.target.value)}
             required
+            disabled={filteredSchools.length === 0}
           >
-            {sortedSchools.map((school) => (
+            {filteredSchools.length === 0 ? (
+              <option value="">Tiada sekolah sepadan</option>
+            ) : null}
+            {filteredSchools.map((school) => (
               <option key={school.code} value={school.code}>
                 {school.code} - {school.name}
               </option>
@@ -183,7 +220,7 @@ export function SubmitForm({
 
       {error ? <p className="error">{error}</p> : null}
       <div className="actions">
-        <button className="button" type="submit" disabled={isSaving}>
+        <button className="button" type="submit" disabled={isSaving || !selectedSchool}>
           {isSaving ? "Menyimpan..." : "Hantar Kemas Kini"}
         </button>
       </div>
