@@ -3,6 +3,7 @@ import {
   buildPublicDirectory,
   chooseLatestBySchoolCode,
   exportAdminCsv,
+  formatPkgZone,
   normalizeSchoolCode,
   normalizeSchoolName,
 } from "./data-utils";
@@ -40,6 +41,8 @@ const submissions: ImportSubmission[] = [
 describe("data utilities", () => {
   it("normalizes school codes and common school-name variants", () => {
     expect(normalizeSchoolCode(" ABA 1025 ")).toBe("ABA1025");
+    expect(formatPkgZone("AYER TAWAR")).toBe("PKG AYER TAWAR");
+    expect(formatPkgZone("PKG BERUAS")).toBe("PKG BERUAS");
     expect(normalizeSchoolName("Sekolah Kebangsaan Kampong Baharu")).toBe(
       "SK KAMPUNG BAHARU",
     );

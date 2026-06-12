@@ -6,6 +6,12 @@ export function normalizeSchoolCode(value: string | null | undefined): string {
     .replace(/[^A-Z0-9]/g, "");
 }
 
+export function formatPkgZone(value: string | null | undefined): string {
+  const text = String(value ?? "").trim();
+  if (!text) return "-";
+  return text.toUpperCase().startsWith("PKG ") ? text : `PKG ${text}`;
+}
+
 export function normalizeSchoolName(value: string | null | undefined): string {
   let text = String(value ?? "").toUpperCase().trim();
   text = text

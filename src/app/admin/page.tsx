@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-auth";
+import { formatPkgZone } from "@/lib/data-utils";
 import { listAdminSchools } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
 
@@ -38,7 +39,7 @@ export default async function AdminPage() {
           <thead>
             <tr>
               <th>Sekolah</th>
-              <th>Zon</th>
+              <th>PKG</th>
               <th>Kemaskini Terakhir</th>
               <th>Peranan Diisi</th>
               <th>Tindakan</th>
@@ -51,7 +52,7 @@ export default async function AdminPage() {
                   <strong>{school.schoolName}</strong>
                   <div className="muted">{school.schoolCode}</div>
                 </td>
-                <td>{school.zone || "-"}</td>
+                <td>{formatPkgZone(school.zone)}</td>
                 <td>{school.submittedAt ? new Date(school.submittedAt).toLocaleString("ms-MY") : "-"}</td>
                 <td>{school.roles.filter((role) => role.teacherName || role.phone).length}/3</td>
                 <td>

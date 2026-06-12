@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { RestoreButton } from "@/components/RestoreButton";
 import { requireAdmin } from "@/lib/admin-auth";
+import { formatPkgZone } from "@/lib/data-utils";
 import { getSchoolHistory } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
 
@@ -29,7 +30,7 @@ export default async function AdminSchoolPage({ params }: { params: { code: stri
         <div className="brand">
           <h1>{school.schoolName}</h1>
           <p>
-            {school.schoolCode} · {school.zone || "Tiada zon"}
+            {school.schoolCode} - {formatPkgZone(school.zone)}
           </p>
         </div>
         <Link className="button secondary" href="/admin">

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatPkgZone } from "@/lib/data-utils";
 import type { PublicDirectoryRow, SchoolOption, TeacherRole } from "@/lib/types";
 
 const roles: { key: TeacherRole; label: string; short: string }[] = [
@@ -97,8 +98,8 @@ export function SubmitForm({
           </select>
         </div>
         <div className="field">
-          <label>Zon</label>
-          <input value={selectedSchool?.zone ?? ""} readOnly />
+          <label>PKG</label>
+          <input value={formatPkgZone(selectedSchool?.zone)} readOnly />
         </div>
         <div className="field">
           <label htmlFor="submitterName">Nama pengisi</label>

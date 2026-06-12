@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatPkgZone } from "@/lib/data-utils";
 import type { PublicDirectoryRow } from "@/lib/types";
 
 export function PublicDirectory({ rows }: { rows: PublicDirectoryRow[] }) {
@@ -42,7 +43,7 @@ export function PublicDirectory({ rows }: { rows: PublicDirectoryRow[] }) {
           <thead>
             <tr>
               <th>Sekolah</th>
-              <th>Zon</th>
+              <th>PKG</th>
               <th>Peranan</th>
               <th>Nama Guru</th>
               <th>No. Telefon</th>
@@ -55,7 +56,7 @@ export function PublicDirectory({ rows }: { rows: PublicDirectoryRow[] }) {
                   <strong>{row.schoolName}</strong>
                   <div className="muted">{row.schoolCode}</div>
                 </td>
-                <td>{row.zone || "-"}</td>
+                <td>{formatPkgZone(row.zone)}</td>
                 <td>
                   <span className="badge">{row.role}</span>
                 </td>

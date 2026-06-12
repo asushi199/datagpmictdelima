@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { formatPkgZone } from "@/lib/data-utils";
 import { useMemo, useState } from "react";
 import type { PublicDirectoryRow, TeacherRole } from "@/lib/types";
 
@@ -29,7 +30,7 @@ const roleCopy: Record<TeacherRole, { title: string; eyebrow: string; empty: str
 const sortLabels: Record<SortKey, string> = {
   schoolName: "Sekolah",
   teacherName: "Nama Guru",
-  zone: "Zon",
+  zone: "PKG",
   phone: "Telefon",
 };
 
@@ -91,7 +92,7 @@ export function RoleDirectory({
           <label htmlFor="search">Carian</label>
           <input
             id="search"
-            placeholder="Cari sekolah, nama guru, zon atau telefon"
+            placeholder="Cari sekolah, nama guru, PKG atau telefon"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
@@ -129,7 +130,7 @@ export function RoleDirectory({
             <div>
               <span className="badge">{row.schoolCode}</span>
               <h2>{row.schoolName}</h2>
-              <p>{row.zone || "Tiada zon"}</p>
+              <p>{formatPkgZone(row.zone)}</p>
             </div>
             <div className="teacher-block">
               <span>{row.teacherName || "Nama belum diisi"}</span>
