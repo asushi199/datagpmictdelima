@@ -1,4 +1,4 @@
-# Direktori Guru ICT, DELIMa & GPM Manjung
+# Direktori GPICT, GP DELIMa & GPM Manjung
 
 Laman ringan untuk memaparkan maklumat asas guru mengikut sekolah, menerima kemas kini tanpa login guru, dan menyimpan sejarah untuk admin.
 

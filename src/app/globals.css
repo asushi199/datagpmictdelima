@@ -519,3 +519,30 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 }
+
+.brand-with-logo {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+}
+
+.site-logo {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  height: 82px;
+  object-fit: contain;
+  padding: 6px;
+  width: 82px;
+}
+
+@media (max-width: 760px) {
+  .brand-with-logo {
+    align-items: flex-start;
+  }
+
+  .site-logo {
+    height: 64px;
+    width: 64px;
+  }
+}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { listPublicDirectory } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
@@ -36,9 +37,12 @@ export default async function HomePage() {
   return (
     <main className="shell portal-shell">
       <div className="topbar portal-topbar">
-        <div className="brand">
-          <h1>Direktori Guru Digital & GPM Manjung</h1>
-          <p>Pilih direktori mengikut peranan. Setiap halaman mempunyai carian dan sorting sendiri.</p>
+        <div className="brand brand-with-logo">
+          <Image src="/ustp-logo.png" alt="Logo USTP Manjung" className="site-logo" width={82} height={82} priority />
+          <div>
+            <h1>Direktori GPICT, GP DELIMa & GPM Manjung</h1>
+            <p>Pilih direktori mengikut peranan. Setiap halaman mempunyai carian dan sorting sendiri.</p>
+          </div>
         </div>
         <div className="actions">
           <Link className="button" href="/submit">
