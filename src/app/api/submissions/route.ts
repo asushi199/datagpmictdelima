@@ -1,0 +1,33 @@
+import { NextResponse } from "next/server";
+import { createSubmission } from "@/lib/repository";
+import type { ImportSubmission, TeacherRole } from "@/lib/types";
+
+const roles: TeacherRole[] = ["GPICT", "DELIMA", "GPM"];
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const submission: ImportSubmission = {
+      submittedAt: new Date().toISOString(),
+      schoolCode: String(body.schoolCode ?? ""),
+      schoolName: String(body.schoolName ?? ""),
+      zone: String(body.zone ?? ""),
+      submitterName: String(body.submitterName ?? ""),
+      submitterPhone: String(body.submitterPhone ?? ""),
+      source: "public_form",
+      roles: roles.map((role) => ({
+        role,
+        teacherName: String(body.roles?.[role]?.teacherName ?? ""),
+        phone: String(body.roles?.[role]?.phone ?? ""),
+      })),
+    };
+
+    await createSubmission(submission);
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json(
+      { ok: false, message: error instanceof Error ? error.message : "Ralat tidak diketahui." },
+      { status: 400 },
+    );
+  }
+}

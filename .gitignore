@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.env
+.env.local
+.vercel
+*.log
+database_password.txt
+*.xlsx
+*.xls
+*.pdf
+supabase/seed.sql
