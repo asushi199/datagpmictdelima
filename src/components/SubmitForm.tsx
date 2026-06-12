@@ -1,34 +1,51 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { SchoolOption, TeacherRole } from "@/lib/types";
+import type { PublicDirectoryRow, SchoolOption, TeacherRole } from "@/lib/types";
 
-const roles: { key: TeacherRole; label: string }[] = [
-  { key: "GPICT", label: "Guru Penyelaras ICT" },
-  { key: "DELIMA", label: "Guru Penyelaras DELIMa" },
-  { key: "GPM", label: "Guru Perpustakaan dan Media" },
+const roles: { key: TeacherRole; label: string; short: string }[] = [
+  { key: "GPICT", label: "Guru Penyelaras ICT", short: "GPICT" },
+  { key: "DELIMA", label: "Guru Penyelaras DELIMa", short: "GP DELIMa" },
+  { key: "GPM", label: "Guru Perpustakaan dan Media", short: "GPM" },
 ];
 
 type RoleState = Record<TeacherRole, { teacherName: string; phone: string }>;
 
-export function SubmitForm({ schools }: { schools: SchoolOption[] }) {
+const emptyRoleState: RoleState = {
+  GPICT: { teacherName: "", phone: "" },
+  DELIMA: { teacherName: "", phone: "" },
+  GPM: { teacherName: "", phone: "" },
+};
+
+export function SubmitForm({
+  schools,
+  currentRows,
+}: {
+  schools: SchoolOption[];
+  currentRows: PublicDirectoryRow[];
+}) {
   const router = useRouter();
-  const [schoolCode, setSchoolCode] = useState(schools[0]?.code ?? "");
+  const sortedSchools = useMemo(
+    () => [...schools].sort((a, b) => a.code.localeCompare(b.code, "ms", { numeric: true })),
+    [schools],
+  );
+  const [schoolCode, setSchoolCode] = useState(sortedSchools[0]?.code ?? "");
+  const [activeRole, setActiveRole] = useState<TeacherRole>("GPICT");
   const [submitterName, setSubmitterName] = useState("");
   const [submitterPhone, setSubmitterPhone] = useState("");
-  const [roleState, setRoleState] = useState<RoleState>({
-    GPICT: { teacherName: "", phone: "" },
-    DELIMA: { teacherName: "", phone: "" },
-    GPM: { teacherName: "", phone: "" },
-  });
+  const [roleState, setRoleState] = useState<RoleState>(emptyRoleState);
   const [error, setError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   const selectedSchool = useMemo(
-    () => schools.find((school) => school.code === schoolCode),
-    [schoolCode, schools],
+    () => sortedSchools.find((school) => school.code === schoolCode),
+    [schoolCode, sortedSchools],
   );
+
+  useEffect(() => {
+    setRoleState(buildRoleStateForSchool(currentRows, schoolCode));
+  }, [currentRows, schoolCode]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,20 +76,22 @@ export function SubmitForm({ schools }: { schools: SchoolOption[] }) {
     router.push("/submit/success");
   }
 
+  const selectedRole = roles.find((role) => role.key === activeRole) ?? roles[0];
+
   return (
     <form className="grid" onSubmit={onSubmit}>
       <div className="panel grid two">
         <div className="field">
-          <label htmlFor="school">Sekolah</label>
+          <label htmlFor="school">Kod Sekolah / Sekolah</label>
           <select
             id="school"
             value={schoolCode}
             onChange={(event) => setSchoolCode(event.target.value)}
             required
           >
-            {schools.map((school) => (
+            {sortedSchools.map((school) => (
               <option key={school.code} value={school.code}>
-                {school.name} ({school.code})
+                {school.code} - {school.name}
               </option>
             ))}
           </select>
@@ -101,20 +120,40 @@ export function SubmitForm({ schools }: { schools: SchoolOption[] }) {
         </div>
       </div>
 
-      <div className="grid three">
-        {roles.map((role) => (
-          <section className="role-card" key={role.key}>
-            <h3>{role.label}</h3>
+      <section className="panel grid">
+        <div>
+          <h2 className="section-title">Pilih peranan untuk dikemas kini</h2>
+          <p className="muted">
+            Data sedia ada dimasukkan dahulu. Jika hanya ubah satu guru, data peranan lain akan kekal.
+          </p>
+        </div>
+        <div className="role-picker">
+          {roles.map((role) => (
+            <button
+              className={activeRole === role.key ? "role-tab active" : "role-tab"}
+              key={role.key}
+              type="button"
+              onClick={() => setActiveRole(role.key)}
+            >
+              <span>{role.short}</span>
+              <small>{roleState[role.key].teacherName || "Belum diisi"}</small>
+            </button>
+          ))}
+        </div>
+
+        <section className="role-card focused-role-card">
+          <h3>{selectedRole.label}</h3>
+          <div className="grid two">
             <div className="field">
-              <label htmlFor={`${role.key}-name`}>Nama guru</label>
+              <label htmlFor={`${selectedRole.key}-name`}>Nama guru</label>
               <input
-                id={`${role.key}-name`}
-                value={roleState[role.key].teacherName}
+                id={`${selectedRole.key}-name`}
+                value={roleState[selectedRole.key].teacherName}
                 onChange={(event) =>
                   setRoleState((current) => ({
                     ...current,
-                    [role.key]: {
-                      ...current[role.key],
+                    [selectedRole.key]: {
+                      ...current[selectedRole.key],
                       teacherName: event.target.value,
                     },
                   }))
@@ -122,24 +161,24 @@ export function SubmitForm({ schools }: { schools: SchoolOption[] }) {
               />
             </div>
             <div className="field">
-              <label htmlFor={`${role.key}-phone`}>No. telefon</label>
+              <label htmlFor={`${selectedRole.key}-phone`}>No. telefon</label>
               <input
-                id={`${role.key}-phone`}
-                value={roleState[role.key].phone}
+                id={`${selectedRole.key}-phone`}
+                value={roleState[selectedRole.key].phone}
                 onChange={(event) =>
                   setRoleState((current) => ({
                     ...current,
-                    [role.key]: {
-                      ...current[role.key],
+                    [selectedRole.key]: {
+                      ...current[selectedRole.key],
                       phone: event.target.value,
                     },
                   }))
                 }
               />
             </div>
-          </section>
-        ))}
-      </div>
+          </div>
+        </section>
+      </section>
 
       {error ? <p className="error">{error}</p> : null}
       <div className="actions">
@@ -149,4 +188,22 @@ export function SubmitForm({ schools }: { schools: SchoolOption[] }) {
       </div>
     </form>
   );
+}
+
+function buildRoleStateForSchool(rows: PublicDirectoryRow[], schoolCode: string): RoleState {
+  const next: RoleState = {
+    GPICT: { teacherName: "", phone: "" },
+    DELIMA: { teacherName: "", phone: "" },
+    GPM: { teacherName: "", phone: "" },
+  };
+
+  for (const row of rows) {
+    if (row.schoolCode !== schoolCode) continue;
+    next[row.role] = {
+      teacherName: row.teacherName,
+      phone: row.phone,
+    };
+  }
+
+  return next;
 }

@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { SubmitForm } from "@/components/SubmitForm";
-import { listSchoolOptions } from "@/lib/repository";
+import { listPublicDirectory, listSchoolOptions } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function SubmitPage() {
-  const schools = await listSchoolOptions();
+  const [schools, currentRows] = await Promise.all([listSchoolOptions(), listPublicDirectory()]);
 
   return (
     <main className="shell">
       <div className="topbar">
         <div className="brand">
           <h1>Kemas Kini Data Sekolah</h1>
-          <p>Pilih sekolah dan isi maklumat semasa bagi tiga peranan.</p>
+          <p>Pilih kod sekolah dahulu, kemudian ubah peranan yang berkaitan sahaja.</p>
         </div>
         <Link className="button secondary" href="/">
           Kembali
@@ -27,7 +27,7 @@ export default async function SubmitPage() {
         </div>
       ) : null}
 
-      <SubmitForm schools={schools} />
+      <SubmitForm schools={schools} currentRows={currentRows} />
     </main>
   );
 }
