@@ -1,4 +1,4 @@
-import type { ImportSubmission, PublicDirectoryRow } from "./types";
+import type { ImportSubmission, PublicDirectoryRow, RecentUpdateRecord } from "./types";
 
 export function normalizeSchoolCode(value: string | null | undefined): string {
   return String(value ?? "")
@@ -94,6 +94,28 @@ export function buildPublicDirectory(
       phone: role.phone,
     })),
   );
+}
+
+export function buildRecentUpdates(
+  submissions: ImportSubmission[],
+  limit: number,
+): RecentUpdateRecord[] {
+  return submissions
+    .map((raw) => {
+      const submission = cleanSubmission(raw);
+      return {
+        id: `${submission.schoolCode}-${submission.submittedAt}`,
+        schoolCode: submission.schoolCode,
+        schoolName: submission.schoolName,
+        zone: submission.zone,
+        submittedAt: submission.submittedAt,
+        submitterName: submission.submitterName ?? null,
+        submitterPhone: submission.submitterPhone ?? null,
+        filledRoleCount: submission.roles.filter((role) => role.teacherName || role.phone).length,
+      };
+    })
+    .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
+    .slice(0, limit);
 }
 
 export function exportAdminCsv(currentSubmissions: ImportSubmission[]): string {

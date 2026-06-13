@@ -44,6 +44,17 @@ export type CurrentSchoolRecord = {
   roles: RoleContact[];
 };
 
+export type RecentUpdateRecord = {
+  id: string;
+  schoolCode: string;
+  schoolName: string;
+  zone: string;
+  submittedAt: string;
+  submitterName: string | null;
+  submitterPhone: string | null;
+  filledRoleCount: number;
+};
+
 export type VersionRecord = {
   id: string;
   schoolCode: string;

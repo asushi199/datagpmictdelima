@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildPublicDirectory,
+  buildRecentUpdates,
   chooseLatestBySchoolCode,
   cleanSchoolDisplayName,
   exportAdminCsv,
@@ -77,5 +78,50 @@ describe("data utilities", () => {
     expect(csv).toContain("school_code,school_name,zone,role,teacher_name,phone");
     expect(csv).toContain("ABA1025,SK Kampung Baharu,AYER TAWAR,GPICT,Guru Baru,0122222222");
     expect(csv).toContain("Kerani Baru");
+  });
+
+  it("builds recent updates in newest-first order with a limit", () => {
+    const rows = buildRecentUpdates(
+      [
+        ...submissions,
+        {
+          submittedAt: "2025-02-18T08:00:00.000Z",
+          schoolCode: " abc 1001 ",
+          schoolName: "SK Seri Manjung",
+          zone: "SITIAWAN",
+          submitterName: "Guru Data",
+          submitterPhone: "0161111111",
+          roles: [
+            { role: "GPICT", teacherName: "", phone: "" },
+            { role: "DELIMA", teacherName: "Guru Delima", phone: "" },
+            { role: "GPM", teacherName: "", phone: "" },
+          ],
+        },
+      ],
+      2,
+    );
+
+    expect(rows).toEqual([
+      {
+        id: "ABA1025-2025-02-20T08:00:00.000Z",
+        schoolCode: "ABA1025",
+        schoolName: "SK Kampung Baharu",
+        zone: "AYER TAWAR",
+        submittedAt: "2025-02-20T08:00:00.000Z",
+        submitterName: "Kerani Baru",
+        submitterPhone: "0199999999",
+        filledRoleCount: 3,
+      },
+      {
+        id: "ABA1025-2025-02-19T08:00:00.000Z",
+        schoolCode: "ABA1025",
+        schoolName: "SK Kampong Baharu",
+        zone: "AYER TAWAR",
+        submittedAt: "2025-02-19T08:00:00.000Z",
+        submitterName: "Kerani Lama",
+        submitterPhone: "0111111111",
+        filledRoleCount: 3,
+      },
+    ]);
   });
 });

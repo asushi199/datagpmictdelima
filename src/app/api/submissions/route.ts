@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { jsonNoStore } from "@/lib/http-cache";
 import { createSubmission } from "@/lib/repository";
 import type { ImportSubmission, TeacherRole } from "@/lib/types";
 
@@ -23,9 +23,9 @@ export async function POST(request: Request) {
     };
 
     await createSubmission(submission);
-    return NextResponse.json({ ok: true });
+    return jsonNoStore({ ok: true });
   } catch (error) {
-    return NextResponse.json(
+    return jsonNoStore(
       { ok: false, message: error instanceof Error ? error.message : "Ralat tidak diketahui." },
       { status: 400 },
     );

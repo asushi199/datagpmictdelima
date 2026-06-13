@@ -1,8 +1,10 @@
 import "server-only";
 
+import { unstable_noStore as noStore } from "next/cache";
 import initialData from "@/data/initial-data.json";
 import {
   buildPublicDirectory,
+  buildRecentUpdates,
   chooseLatestBySchoolCode,
   cleanSchoolDisplayName,
   cleanSubmission,
@@ -14,6 +16,7 @@ import type {
   CurrentSchoolRecord,
   ImportSubmission,
   PublicDirectoryRow,
+  RecentUpdateRecord,
   RoleContact,
   SchoolOption,
   TeacherRole,
@@ -49,6 +52,7 @@ type DbSchool = {
 const demoSubmissions = (initialData as ImportSubmission[]).map(cleanSubmission);
 
 export async function listPublicDirectory(): Promise<PublicDirectoryRow[]> {
+  noStore();
   const supabase = getSupabaseAdmin();
   if (!supabase) {
     return buildPublicDirectory(chooseLatestBySchoolCode(demoSubmissions));
@@ -76,6 +80,7 @@ export async function listPublicDirectory(): Promise<PublicDirectoryRow[]> {
 }
 
 export async function listSchoolOptions(): Promise<SchoolOption[]> {
+  noStore();
   const supabase = getSupabaseAdmin();
   if (!supabase) {
     return chooseLatestBySchoolCode(demoSubmissions).map((item) => ({
@@ -94,6 +99,7 @@ export async function listSchoolOptions(): Promise<SchoolOption[]> {
 }
 
 export async function listAdminSchools(): Promise<CurrentSchoolRecord[]> {
+  noStore();
   const supabase = getSupabaseAdmin();
   if (!supabase) {
     return chooseLatestBySchoolCode(demoSubmissions).map((submission) => ({
@@ -133,9 +139,37 @@ export async function listAdminSchools(): Promise<CurrentSchoolRecord[]> {
   });
 }
 
+export async function listRecentUpdates(limit = 20): Promise<RecentUpdateRecord[]> {
+  noStore();
+  const supabase = getSupabaseAdmin();
+  if (!supabase) {
+    return buildRecentUpdates(demoSubmissions, limit);
+  }
+
+  const { data, error } = await supabase
+    .from("contact_versions")
+    .select("id,school_code,school_name,zone,submitted_at,submitter_name,submitter_phone,source,is_hidden,contact_roles(role,teacher_name,phone)")
+    .order("submitted_at", { ascending: false })
+    .limit(limit)
+    .returns<DbVersion[]>();
+  if (error) throw error;
+
+  return (data ?? []).map((version) => ({
+    id: version.id,
+    schoolCode: version.school_code,
+    schoolName: version.school_name,
+    zone: version.zone,
+    submittedAt: version.submitted_at,
+    submitterName: version.submitter_name,
+    submitterPhone: version.submitter_phone,
+    filledRoleCount: (version.contact_roles ?? []).filter((role) => role.teacher_name || role.phone).length,
+  }));
+}
+
 export async function getSchoolHistory(
   schoolCode: string,
 ): Promise<{ school: CurrentSchoolRecord | null; versions: VersionRecord[] }> {
+  noStore();
   const code = normalizeSchoolCode(schoolCode);
   const supabase = getSupabaseAdmin();
   if (!supabase) {

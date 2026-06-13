@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-auth";
 import { formatPkgZone } from "@/lib/data-utils";
-import { listAdminSchools } from "@/lib/repository";
+import { listAdminSchools, listRecentUpdates } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   requireAdmin();
-  const schools = await listAdminSchools();
+  const [schools, recentUpdates] = await Promise.all([
+    listAdminSchools(),
+    listRecentUpdates(20),
+  ]);
 
   return (
     <main className="shell">
@@ -33,6 +36,58 @@ export default async function AdminPage() {
           memerlukan Supabase.
         </div>
       ) : null}
+
+      <section className="panel grid">
+        <div>
+          <h2 className="section-title">Kemas Kini Terkini</h2>
+          <p className="muted">20 penghantaran terbaru untuk semakan admin.</p>
+        </div>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Masa</th>
+                <th>Sekolah</th>
+                <th>Pengisi</th>
+                <th>Peranan Diisi</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentUpdates.map((update) => (
+                <tr key={update.id}>
+                  <td>{new Date(update.submittedAt).toLocaleString("ms-MY")}</td>
+                  <td>
+                    <strong>{update.schoolName}</strong>
+                    <div className="muted">
+                      {update.schoolCode} - {formatPkgZone(update.zone)}
+                    </div>
+                  </td>
+                  <td>
+                    {update.submitterName || "-"}
+                    <div className="muted">{update.submitterPhone || "-"}</div>
+                  </td>
+                  <td>{update.filledRoleCount}/3</td>
+                  <td>
+                    <Link className="button secondary" href={`/admin/schools/${update.schoolCode}`}>
+                      Sejarah
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+              {recentUpdates.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="muted">
+                    Tiada kemas kini untuk dipaparkan.
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div style={{ height: 16 }} />
 
       <div className="table-wrap">
         <table>

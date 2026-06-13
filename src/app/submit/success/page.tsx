@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function SubmitSuccessPage() {
   return (
     <main className="shell">
@@ -9,12 +7,12 @@ export default function SubmitSuccessPage() {
           <p>Data sekolah telah diterima dan akan dipaparkan sebagai maklumat terkini.</p>
         </div>
         <div className="actions">
-          <Link className="button" href="/">
+          <a className="button" href="/">
             Lihat Direktori
-          </Link>
-          <Link className="button secondary" href="/submit">
+          </a>
+          <a className="button secondary" href="/submit">
             Hantar Sekolah Lain
-          </Link>
+          </a>
         </div>
       </section>
     </main>
