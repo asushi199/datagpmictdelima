@@ -1,8 +1,7 @@
 import { jsonNoStore } from "@/lib/http-cache";
 import { createSubmission } from "@/lib/repository";
-import type { ImportSubmission, TeacherRole } from "@/lib/types";
-
-const roles: TeacherRole[] = ["GPICT", "DELIMA", "GPM"];
+import { ROLE_ORDER } from "@/lib/role-config";
+import type { ImportSubmission } from "@/lib/types";
 
 export async function POST(request: Request) {
   try {
@@ -15,7 +14,7 @@ export async function POST(request: Request) {
       submitterName: String(body.submitterName ?? ""),
       submitterPhone: String(body.submitterPhone ?? ""),
       source: "public_form",
-      roles: roles.map((role) => ({
+      roles: ROLE_ORDER.map((role) => ({
         role,
         teacherName: String(body.roles?.[role]?.teacherName ?? ""),
         phone: String(body.roles?.[role]?.phone ?? ""),

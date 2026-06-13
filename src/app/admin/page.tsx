@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-auth";
 import { formatPkgZone } from "@/lib/data-utils";
+import { EXPORT_ROLE_PRESETS } from "@/lib/role-config";
 import { listAdminSchools, listRecentUpdates } from "@/lib/repository";
 import { isSupabaseConfigured } from "@/lib/supabase-server";
 
@@ -21,9 +22,6 @@ export default async function AdminPage() {
           <p>{schools.length} sekolah dalam senarai semasa.</p>
         </div>
         <div className="actions">
-          <a className="button" href="/api/admin/export">
-            Export CSV
-          </a>
           <Link className="button secondary" href="/">
             Direktori
           </Link>
@@ -37,11 +35,46 @@ export default async function AdminPage() {
         </div>
       ) : null}
 
-      <section className="panel grid">
+      <section className="panel grid export-panel">
         <div>
+          <h2 className="section-title">Cetak & Export</h2>
+          <p className="muted">Pilih jenis senarai dan peranan dahulu, kemudian cetak atau muat turun CSV.</p>
+        </div>
+        <form className="export-form" method="get">
+          <div className="field">
+            <label htmlFor="exportType">Jenis Senarai</label>
+            <select id="exportType" name="type" defaultValue="teachers">
+              <option value="teachers">Data Guru</option>
+              <option value="schools">Senarai Sekolah</option>
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="exportRoles">Peranan</label>
+            <select id="exportRoles" name="roles" defaultValue="GPM,GPICT,DELIMA">
+              {EXPORT_ROLE_PRESETS.map((preset) => (
+                <option key={preset.value} value={preset.value}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+            <span className="lookup-hint">Untuk Senarai Sekolah, pilihan peranan diabaikan.</span>
+          </div>
+          <div className="export-actions">
+            <button className="button" type="submit" formAction="/admin/print" formTarget="_blank">
+              Cetak
+            </button>
+            <button className="button secondary" type="submit" formAction="/api/admin/export">
+              CSV
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <details className="panel grid admin-section" open>
+        <summary>
           <h2 className="section-title">Kemas Kini Terkini</h2>
           <p className="muted">20 penghantaran terbaru untuk semakan admin.</p>
-        </div>
+        </summary>
         <div className="table-wrap">
           <table>
             <thead>
@@ -85,41 +118,47 @@ export default async function AdminPage() {
             </tbody>
           </table>
         </div>
-      </section>
+      </details>
 
       <div style={{ height: 16 }} />
 
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Sekolah</th>
-              <th>PKG</th>
-              <th>Kemaskini Terakhir</th>
-              <th>Peranan Diisi</th>
-              <th>Tindakan</th>
-            </tr>
-          </thead>
-          <tbody>
-            {schools.map((school) => (
-              <tr key={school.schoolCode}>
-                <td>
-                  <strong>{school.schoolName}</strong>
-                  <div className="muted">{school.schoolCode}</div>
-                </td>
-                <td>{formatPkgZone(school.zone)}</td>
-                <td>{school.submittedAt ? new Date(school.submittedAt).toLocaleString("ms-MY") : "-"}</td>
-                <td>{school.roles.filter((role) => role.teacherName || role.phone).length}/3</td>
-                <td>
-                  <Link className="button secondary" href={`/admin/schools/${school.schoolCode}`}>
-                    Sejarah
-                  </Link>
-                </td>
+      <details className="panel grid admin-section">
+        <summary>
+          <h2 className="section-title">Senarai Sekolah</h2>
+          <p className="muted">{schools.length} sekolah. Klik untuk buka jadual penuh.</p>
+        </summary>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sekolah</th>
+                <th>PKG</th>
+                <th>Kemaskini Terakhir</th>
+                <th>Peranan Diisi</th>
+                <th>Tindakan</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {schools.map((school) => (
+                <tr key={school.schoolCode}>
+                  <td>
+                    <strong>{school.schoolName}</strong>
+                    <div className="muted">{school.schoolCode}</div>
+                  </td>
+                  <td>{formatPkgZone(school.zone)}</td>
+                  <td>{school.submittedAt ? new Date(school.submittedAt).toLocaleString("ms-MY") : "-"}</td>
+                  <td>{school.roles.filter((role) => role.teacherName || role.phone).length}/3</td>
+                  <td>
+                    <Link className="button secondary" href={`/admin/schools/${school.schoolCode}`}>
+                      Sejarah
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
     </main>
   );
 }

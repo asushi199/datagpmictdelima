@@ -11,6 +11,7 @@ import {
   exportAdminCsv,
   normalizeSchoolCode,
 } from "./data-utils";
+import { ROLE_ORDER } from "./role-config";
 import { getSupabaseAdmin } from "./supabase-server";
 import type {
   CurrentSchoolRecord,
@@ -19,6 +20,7 @@ import type {
   RecentUpdateRecord,
   RoleContact,
   SchoolOption,
+  AdminExportOptions,
   TeacherRole,
   VersionRecord,
 } from "./types";
@@ -360,7 +362,9 @@ export async function updateSchoolName(schoolCode: string, nextName: string): Pr
   return code;
 }
 
-export async function exportCurrentAdminCsv(): Promise<string> {
+export async function exportCurrentAdminCsv(
+  options?: Partial<AdminExportOptions>,
+): Promise<string> {
   const current = await listAdminSchools();
   return exportAdminCsv(
     current.map((school) => ({
@@ -373,6 +377,10 @@ export async function exportCurrentAdminCsv(): Promise<string> {
       source: school.source,
       roles: school.roles,
     })),
+    {
+      listType: options?.listType ?? "teachers",
+      roles: options?.roles ?? ROLE_ORDER,
+    },
   );
 }
 
@@ -401,14 +409,13 @@ async function getVersionsByIds(ids: string[]): Promise<DbVersion[]> {
 }
 
 function mapDbRoles(roles: DbRole[]): RoleContact[] {
-  const order: TeacherRole[] = ["GPICT", "DELIMA", "GPM"];
   return roles
     .map((role) => ({
       role: role.role,
       teacherName: role.teacher_name,
       phone: role.phone,
     }))
-    .sort((a, b) => order.indexOf(a.role) - order.indexOf(b.role));
+    .sort((a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role));
 }
 
 function mapVersion(version: DbVersion, school: DbSchool): VersionRecord {

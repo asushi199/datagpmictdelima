@@ -3,13 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPkgZone } from "@/lib/data-utils";
+import { ROLE_FORM_OPTIONS } from "@/lib/role-config";
 import type { PublicDirectoryRow, SchoolOption, TeacherRole } from "@/lib/types";
-
-const roles: { key: TeacherRole; label: string; short: string }[] = [
-  { key: "GPICT", label: "Guru Penyelaras ICT", short: "GPICT" },
-  { key: "DELIMA", label: "Guru Penyelaras DELIMa", short: "GP DELIMa" },
-  { key: "GPM", label: "Guru Perpustakaan dan Media", short: "GPM" },
-];
 
 type RoleState = Record<TeacherRole, { teacherName: string; phone: string }>;
 
@@ -33,7 +28,7 @@ export function SubmitForm({
   );
   const [schoolQuery, setSchoolQuery] = useState("");
   const [schoolCode, setSchoolCode] = useState(sortedSchools[0]?.code ?? "");
-  const [activeRole, setActiveRole] = useState<TeacherRole>("GPICT");
+  const [activeRole, setActiveRole] = useState<TeacherRole>(ROLE_FORM_OPTIONS[0].key);
   const [submitterName, setSubmitterName] = useState("");
   const [submitterPhone, setSubmitterPhone] = useState("");
   const [roleState, setRoleState] = useState<RoleState>(emptyRoleState);
@@ -100,7 +95,7 @@ export function SubmitForm({
     router.push("/submit/success");
   }
 
-  const selectedRole = roles.find((role) => role.key === activeRole) ?? roles[0];
+  const selectedRole = ROLE_FORM_OPTIONS.find((role) => role.key === activeRole) ?? ROLE_FORM_OPTIONS[0];
 
   return (
     <form className="grid" onSubmit={onSubmit}>
@@ -166,7 +161,7 @@ export function SubmitForm({
           </p>
         </div>
         <div className="role-picker">
-          {roles.map((role) => (
+          {ROLE_FORM_OPTIONS.map((role) => (
             <button
               className={activeRole === role.key ? "role-tab active" : "role-tab"}
               key={role.key}

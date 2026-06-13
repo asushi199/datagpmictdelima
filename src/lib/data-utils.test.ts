@@ -80,6 +80,28 @@ describe("data utilities", () => {
     expect(csv).toContain("Kerani Baru");
   });
 
+  it("exports admin CSV filtered to selected teacher roles", () => {
+    const csv = exportAdminCsv(chooseLatestBySchoolCode(submissions), {
+      listType: "teachers",
+      roles: ["GPM", "GPICT"],
+    });
+
+    expect(csv).toContain("ABA1025,SK Kampung Baharu,AYER TAWAR,GPM,Guru Pusat Sumber,0141111111");
+    expect(csv).toContain("ABA1025,SK Kampung Baharu,AYER TAWAR,GPICT,Guru Baru,0122222222");
+    expect(csv).not.toContain("DELIMA");
+  });
+
+  it("exports school list CSV as one row per school", () => {
+    const csv = exportAdminCsv(chooseLatestBySchoolCode(submissions), {
+      listType: "schools",
+      roles: ["GPM"],
+    });
+
+    expect(csv).toContain("school_code,school_name,zone,submitted_at,peranan_diisi");
+    expect(csv).toContain("ABA1025,SK Kampung Baharu,AYER TAWAR,2025-02-20T08:00:00.000Z,3/3");
+    expect(csv).not.toContain("Guru Baru");
+  });
+
   it("builds recent updates in newest-first order with a limit", () => {
     const rows = buildRecentUpdates(
       [

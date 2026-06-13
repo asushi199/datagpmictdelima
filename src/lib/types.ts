@@ -1,5 +1,7 @@
 export type TeacherRole = "GPICT" | "DELIMA" | "GPM";
 
+export type ExportListType = "teachers" | "schools";
+
 export type RoleContact = {
   role: TeacherRole;
   teacherName: string;
@@ -53,6 +55,11 @@ export type RecentUpdateRecord = {
   submitterName: string | null;
   submitterPhone: string | null;
   filledRoleCount: number;
+};
+
+export type AdminExportOptions = {
+  listType: ExportListType;
+  roles: TeacherRole[];
 };
 
 export type VersionRecord = {

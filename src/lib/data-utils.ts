@@ -1,4 +1,10 @@
-import type { ImportSubmission, PublicDirectoryRow, RecentUpdateRecord } from "./types";
+import { ROLE_ORDER } from "./role-config";
+import type {
+  AdminExportOptions,
+  ImportSubmission,
+  PublicDirectoryRow,
+  RecentUpdateRecord,
+} from "./types";
 
 export function normalizeSchoolCode(value: string | null | undefined): string {
   return String(value ?? "")
@@ -118,7 +124,30 @@ export function buildRecentUpdates(
     .slice(0, limit);
 }
 
-export function exportAdminCsv(currentSubmissions: ImportSubmission[]): string {
+export function exportAdminCsv(
+  currentSubmissions: ImportSubmission[],
+  options: AdminExportOptions = { listType: "teachers", roles: ROLE_ORDER },
+): string {
+  if (options.listType === "schools") {
+    const header = [
+      "school_code",
+      "school_name",
+      "zone",
+      "submitted_at",
+      "peranan_diisi",
+    ];
+    const rows = currentSubmissions.map((submission) => [
+      normalizeSchoolCode(submission.schoolCode),
+      submission.schoolName,
+      submission.zone,
+      submission.submittedAt,
+      `${submission.roles.filter((role) => role.teacherName || role.phone).length}/3`,
+    ]);
+
+    return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+  }
+
+  const selectedRoles = new Set(options.roles);
   const header = [
     "school_code",
     "school_name",
@@ -132,18 +161,20 @@ export function exportAdminCsv(currentSubmissions: ImportSubmission[]): string {
     "source",
   ];
   const rows = currentSubmissions.flatMap((submission) =>
-    submission.roles.map((role) => [
-      normalizeSchoolCode(submission.schoolCode),
-      submission.schoolName,
-      submission.zone,
-      role.role,
-      role.teacherName,
-      role.phone,
-      submission.submittedAt,
-      submission.submitterName ?? "",
-      submission.submitterPhone ?? "",
-      submission.source ?? "",
-    ]),
+    submission.roles
+      .filter((role) => selectedRoles.has(role.role))
+      .map((role) => [
+        normalizeSchoolCode(submission.schoolCode),
+        submission.schoolName,
+        submission.zone,
+        role.role,
+        role.teacherName,
+        role.phone,
+        submission.submittedAt,
+        submission.submitterName ?? "",
+        submission.submitterPhone ?? "",
+        submission.source ?? "",
+      ]),
   );
 
   return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
