@@ -779,6 +779,10 @@ tr:last-child td {
   padding: 7px 8px;
 }
 
+.print-table tbody tr:last-child td {
+  border-bottom: 1px solid #9ca3af;
+}
+
 .print-table th {
   background: #f3f4f6;
   color: #111827;
